@@ -1,0 +1,155 @@
+11.
+f1 = 1
+f2 = 1
+for i in range(1,21):
+ print ('%12d %12d' % (f1,f2))
+ if (i % 2) == 0:
+  print ('')
+ f1 = f1 + f2
+ f2 = f1 + f2
+运行结果：
+
+ 1            1
+           2            3
+
+           5            8
+          13           21
+
+          34           55
+          89          144
+
+         233          377
+         610          987
+
+        1597         2584
+        4181         6765
+
+       10946        17711
+       28657        46368
+
+       75025       121393
+      196418       317811
+
+      514229       832040
+     1346269      2178309
+
+     3524578      5702887
+     9227465     14930352
+
+    24157817     39088169
+    63245986    102334155
+
+12.
+c = 0
+for m in range(101,201):
+ for i in range(2,(int)(m/2)):
+  f = 1
+  if(m%i == 0):
+   f = 0
+   break
+ if(f == 1):
+  print(m)
+  print(' ')
+  c = c + 1
+print('一共有%d个素数'%(c))
+运行结果：
+101，103，107，109，113，127，131，137，139，149，151，157，163，167，173，179，181，191，193，197，199
+一共有21个素数
+
+13.
+for n in range(100,1001):
+ i = n / 100
+ j = n / 10 % 10
+ k = n % 10
+ if i * 100 + j * 10 + k == i + j ** 2 + k ** 3:
+ print "%-5d" % n
+
+14.
+import stdout
+n = int(input("input number:\n"))
+print ("n = %d" % n)
+for i in range(2,n + 1):
+ while n != i:
+  if n % i == 0:
+   stdout.write(str(i))
+   stdout.write("*")
+   n = n / i
+  else:
+   break
+print ("%d" % n)
+
+15.
+score = int(input('input score:\n'))
+if score >= 90:
+ grade = 'A'
+elif score >= 60:
+ grade = 'B'
+else:
+ grade = 'C'
+print (grade)
+
+17.
+import string
+s = input('input a string:\n')
+letters = 0
+space = 0
+digit = 0
+others = 0
+for c in s:
+ if c.isalpha():
+  letters += 1
+ elif c.isspace():
+  space += 1
+ elif c.isdigit():
+  digit += 1
+ else:
+  others += 1
+
+print ('该字串中字母有%d个，空格有%d个，数字有%d个，其它字符有%d个' % (letters,space,digit,others))
+
+18.
+from functools import reduce
+r = 0
+s=[]
+
+n = (int)(input('input number:\n'))
+c = (int)(input('input count:\n'))
+for i in range(c):
+ r = r+n
+ n = n*10
+ s.append(r)
+
+s = reduce(lambda x,y:x+y,s)
+print(s)
+
+19.
+from sys import stdout
+for j in range(2, 1001):
+    k = []
+    n = -1
+    s = j
+    for i in range(1, j):
+        if j % i == 0:
+            n += 1
+            s -= i
+            k.append(i)
+
+    if s == 0:
+        print(j)
+
+运行结果：
+6
+28
+496
+
+20.
+Sn = 100.0
+Hn = Sn / 2
+for n in range(2,11):
+ Sn += 2 * Hn
+ Hn /= 2
+print ('总路程： %f' % Sn)
+print ('第十次弹起 %f 米' % Hn)
+运行结果：
+总路程： 299.609375
+第十次弹起 0.097656 米
