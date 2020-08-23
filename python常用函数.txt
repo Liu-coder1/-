@@ -1,0 +1,48 @@
+1.ord（），字符转十进制ASCII码
+
+2.chr（），十进制ASCII码转字符
+
+
+python引用变量的顺序： 当前作用域局部变量->外层作用域变量->当前模块中的全局变量->python内置变量 。
+
+3.global 声明全局变量
+
+4.nonlocal 函数在其它作用域中使用非全局变量
+
+5.@fun1
+  def fun2（）
+  
+  装饰器：@fun1，用fun1（）来装饰fun2（），实际上就是将fun2()作为fun1（）的形参并调用。
+
+6.
+动态参数（*args,**kwargs）都必须在参数的最后定义
+
+*args 重复取参数
+def sum(*args):
+    s=0
+    for i in args:
+        s+=i
+    return s
+print(sum(1,2,3,4,5,6,7,8,9,))
+
+**kwargs 重复取可定义的参数
+def duocan(**kwargs):
+    print(kwargs)
+duocan(a=1,b=2,c=3)
+
+7.特殊函数lambda；
+  lambda 若干参数： 表达式
+
+8.特殊函数map；
+  map（function，range（n））
+  对1~n-1范围内的所有数代入function中计算
+
+9.zip（iterable，···）
+  将一个或多个迭代器中对应的元素打包为元组，长度与最短的迭代器一致
+
+10.特殊函数filter；  （过滤器）
+   例如：
+   n = range（-5,5）
+   f = filter（lambda x：x>0,n）
+   f变成（1,2,3,4）
+   
