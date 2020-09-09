@@ -1,0 +1,219 @@
+//Python连接数据库&可视化
+import pymssql
+import tkinter  # 导入 tkinter 库
+import tkinter.ttk as ttk
+from tkinter import StringVar   #接受字符输入的对象
+from tkinter import IntVar      #接受整数输入的对象
+from tkinter import END
+
+
+def delButton(tree):
+    x = tree.get_children()
+    for item in x:
+        tree.delete(item)
+
+
+def clear():  #清除
+    entrySno2.delete(0, END)
+    entrySname.delete(0, END)
+    entrytime.delete(0, END)
+    entrymoney.delete(0, END)
+    entrynam.delete(0, END)
+    entrySno1.delete(0, END)
+    entrySno3.delete(0, END)
+
+    entryMno.delete(0, END)
+    entryUname.delete(0, END)
+    entryfdata.delete(0, END)
+
+
+def search(): #查找
+    conn = pymssql.connect(host='127.0.0.1', user='LIU', password='123456', database='xjkxt', charset="GBK")
+    cursor = conn.cursor()
+    sql = 'select * from xjk'
+    if len(snovar1.get().strip()) > 0:
+        sql = 'select * from xjk where 消费编号 = %s'
+    cursor.execute(sql, (snovar1.get().strip()))
+    delButton(treeview)
+    for row in cursor:
+        treeview.insert('', 'end', values=row)
+
+
+def insert():  #插入（增加）
+    conn = pymssql.connect(host='127.0.0.1', user='LIU', password='123456', database='xjkxt', charset="UTF-8")
+    cursor = conn.cursor()
+    sql = 'insert into xjk values(%s,%s,%d,%s,%s,%s)'
+    print(sql)
+    cursor.execute(sql, ((snovar2.get().strip()), (snamevar.get().strip()), (moneyvar.get()), (timevar.get().strip()),
+                         (namvar.get().strip()),pervar.get().strip()))
+    conn.commit()
+    delButton(treeview)
+
+def getstu():  #显示（获取）
+    conn = pymssql.connect(host='127.0.0.1', user='LIU', password='123456', database='xjkxt', charset="GBK")
+    print(conn)  ##连接是否成功?
+    print('连接成功!')  # 查看连接是否成功
+    cursor = conn.cursor()
+    sql = 'select * from xjk'
+    cursor.execute(sql)
+    delButton(treeview)
+    for row in cursor:
+        treeview.insert('', 'end', values=row)
+
+def sum(): #求和
+    conn = pymssql.connect(host='127.0.0.1', user='LIU', password='123456', database='xjkxt', charset="GBK")
+    cursor = conn.cursor()
+    sql='select sum(消费金额) from xjk'
+    a=cursor.execute(sql)
+    delButton(treeview)
+    for row in cursor:
+        treeview.insert('','end', values=row)
+
+def drop():  #删除
+    conn = pymssql.connect(host='127.0.0.1', user='LIU', password='123456', database='xjkxt', charset="GBK")
+    cursor = conn.cursor()
+    sql = 'delete from xjk where 消费编号=%s'
+    cursor.execute(sql, (snovar3.get().strip()))
+    conn.commit()
+    delButton(treeview)
+
+
+def update():   #修改
+    conn = pymssql.connect(host='127.0.0.1', user='LIU', password='123456', database='xjkxt', charset="UTF-8")
+    cursor = conn.cursor()
+    sql1 = 'update xjk set 消费编号=%s where 消费编号=%s'
+    sql2 = 'update xjk set 消费项目=%s where 消费编号=%s'
+    sql3 = 'update xjk set 消费金额=%d where 消费编号=%s'
+    sql4 = 'update xjk set 消费时间=%s where 消费编号=%s'
+    sql5 = 'update xjk set 商品名称=%s where 消费编号=%s'
+    sql6 = 'update xjk set 消费人=%s where 消费编号=%s'
+    if updatename.get().strip() == '消费编号':
+        cursor.execute(sql1, ((finaldata1.get().strip()), (snovar4.get().strip())))    #strip 消除空格
+        conn.commit()
+    if updatename.get().strip() == '消费项目':
+        cursor.execute(sql2, ((finaldata1.get().strip()), (snovar4.get().strip())))
+        conn.commit()
+    if updatename.get().strip() == '消费金额':
+        cursor.execute(sql3, ((finaldata1.get()), (snovar4.get().strip())))
+        conn.commit()
+    if updatename.get().strip() == '消费时间':
+        cursor.execute(sql4, ((finaldata1.get().strip()), (snovar4.get().strip())))
+        conn.commit()
+    if updatename.get().strip() == '商品名称':
+        cursor.execute(sql5, ((finaldata1.get().strip()), (snovar4.get().strip())))
+        conn.commit()
+    if updatename.get().strip() == '消费人':
+        cursor.execute(sql6, ((finaldata1.get().strip()), (snovar4.get().strip())))
+        conn.commit()
+    delButton(treeview)
+
+if __name__ == '__main__':
+    window = tkinter.Tk()     #窗口创建
+    window.title('小金库')    #窗口标题
+    window.geometry('1200x500')   #窗口大小
+
+    stulist = tkinter.Frame(height=500, width=800,bg='blue')  # 创建列表分区
+    stuBtn= tkinter.Frame(height=500, width=400,bg='blue')  # 创建按钮分区
+    stulist.grid(row=0, column=0)
+    stuBtn.grid(row=0, column=1)
+
+    columns = ("消费编号", "消费项目", "消费金额", "消费时间", "商品名称","消费人")
+    treeview = ttk.Treeview(stulist, height=18, show="headings", columns=columns)  # 在stulist区域创建一个表格treeview
+
+    treeview.column("消费编号", width=120, anchor='center')  # 列名，宽度，位置，对齐方式
+    treeview.column("消费项目", width=120, anchor='center')
+    treeview.column("消费金额", width=120, anchor='center')
+    treeview.column("消费时间", width=120, anchor='center')
+    treeview.column("商品名称", width=120, anchor='center')
+    treeview.column("消费人",width=120,anchor='center')
+
+    treeview.heading("消费编号", text="消费编号")  # 显示表头
+    treeview.heading("消费项目", text="消费项目")
+    treeview.heading("消费金额", text="消费金额")
+    treeview.heading("消费时间", text="消费时间")
+    treeview.heading("商品名称", text="商品名称")
+    treeview.heading("消费人",text="消费人")
+    treeview.place(x=10, y=50, anchor='nw')  # 将列表放置到列表分区中
+
+    labsearch = tkinter.Label(stuBtn, text='查询输入框:',bg='yellow')
+    labsno1 = tkinter.Label(stuBtn, text='消费编号：',bg='yellow')
+    labsno3 = tkinter.Label(stuBtn, text='删除输入框:',bg='yellow')
+    labname = tkinter.Label(stuBtn, text='消费项目：',bg='yellow')
+    labmoney = tkinter.Label(stuBtn, text='金额：',bg='yellow')
+    labtime = tkinter.Label(stuBtn, text='时间：',bg='yellow')
+    labway = tkinter.Label(stuBtn, text='商品名称：',bg='yellow')
+    labper = tkinter.Label(stuBtn, text='消费人:',bg='yellow')
+    labMno = tkinter.Label(stuBtn, text='要修改的消费编号：', bg='yellow')
+    labUname = tkinter.Label(stuBtn, text='要修改的列名：', bg='yellow')
+    labfdata = tkinter.Label(stuBtn, text='修改内容：', bg='yellow')
+
+    labsearch.place(x=20,y=60, anchor='nw')
+    labsno1.place(x=20, y=130, anchor='nw')
+    labsno3.place(x=260,y=130, anchor='nw')
+    labname.place(x=20, y=165, anchor='nw')
+    labmoney.place(x=20, y=195, anchor='nw')
+    labtime.place(x=20, y=225, anchor='nw')
+    labway.place(x=20, y=255, anchor='nw')
+    labper.place(x=20, y=285, anchor='nw')
+    labMno.place(x=0, y=355, anchor='nw')
+    labUname.place(x=0, y=385, anchor='nw')
+    labfdata.place(x=20, y=415, anchor='nw')
+
+    snovar1 = StringVar()  # 查询输入
+
+    snovar2 = StringVar()  # 添加输入
+    snamevar = StringVar()
+    moneyvar = IntVar()
+    timevar = StringVar()
+    namvar = StringVar()
+    pervar = StringVar()
+
+    snovar3 = StringVar()  # 删除输入
+
+    snovar4 = StringVar()  # 修改输入
+    updatename = StringVar()
+    finaldata1 = StringVar()
+
+    entryMno = tkinter.Entry(stuBtn, textvariable=snovar4, width=20)  # 修改输入框
+    entryUname = tkinter.Entry(stuBtn, textvariable=updatename, width=20)
+    entryfdata = tkinter.Entry(stuBtn, textvariable=finaldata1, width=20)
+    entryMno.place(x=100, y=355, anchor='nw')
+    entryUname.place(x=100, y=385, anchor='nw')
+    entryfdata.place(x=100, y=415, anchor='nw')
+
+    entrySno1 = tkinter.Entry(stuBtn, textvariable=snovar1, width=20)  # 查询输入框
+
+    entrySno2 = tkinter.Entry(stuBtn, textvariable=snovar2, width=20)  # 添加输入框
+    entrySname = tkinter.Entry(stuBtn, textvariable=snamevar, width=20)
+    entrytime = tkinter.Entry(stuBtn, textvariable=timevar, width=20)
+    entrymoney = tkinter.Entry(stuBtn, textvariable=moneyvar, width=20)
+    entrynam = tkinter.Entry(stuBtn, textvariable=namvar, width=20)
+    entryper = tkinter.Entry(stuBtn, textvariable=pervar, width=20)
+
+    entrySno3 = tkinter.Entry(stuBtn, textvariable=snovar3, width=5)   #删除输入框
+
+    entrySno3.place(x=340, y=130, anchor='nw')
+    entrySno2.place(x=100, y=130, anchor='nw')
+    entrySno1.place(x=100, y=60, anchor='nw')
+    entrySname.place(x=100, y=165, anchor='nw')
+    entrymoney.place(x=100, y=195, anchor='nw')
+    entrytime.place(x=100, y=225, anchor='nw')
+    entrynam.place(x=100, y=255, anchor='nw')
+    entryper.place(x=100, y=285, anchor='nw')
+
+    #按钮调用函数功能
+    stuget_Btn1 = tkinter.Button(stuBtn, text="获取消费信息", command=getstu, bg='purple')
+    stuget_Btn2 = tkinter.Button(stuBtn, text="查询消费信息", command=search, bg='purple')
+    stuget_Btn3 = tkinter.Button(stuBtn, text="添加消费信息", command=insert, bg='purple')
+    stuget_Btn4 = tkinter.Button(stuBtn, text="删除消费信息", command=drop, bg='purple')
+    stuget_Btn5 = tkinter.Button(stuBtn, text="修改消费信息", command=update, bg='purple')
+    stuget_Btn6 = tkinter.Button(stuBtn, text="清空输入框", command=clear, bg='purple')
+    stuget_Btn7 = tkinter.Button(stuBtn, text="计算总支出", command=sum, bg='purple')
+    stuget_Btn7.place(x=300, y=250, anchor='nw')
+    stuget_Btn6.place(x=300, y=215, anchor='nw')
+    stuget_Btn5.place(x=5, y=320, anchor='nw')
+    stuget_Btn4.place(x=260, y=95, anchor='nw')
+    stuget_Btn3.place(x=5, y=95, anchor='nw')
+    stuget_Btn2.place(x=5, y=25, anchor='nw')
+    stuget_Btn1.place(x=300, y=55, anchor='nw')  # 将button放置到按钮分区中
+    window.mainloop()  # 进入消息循环
